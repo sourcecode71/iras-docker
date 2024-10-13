@@ -127,10 +127,10 @@ Replace `yourusername` with your GitHub username.
 Run the following command in the terminal (Windows Command Prompt, PowerShell, or Ubuntu WSL):
 
 ```bash
-docker build -t my-node-app .
+docker build -t iras-docker .
 ```
 
-- `-t my-node-app`: Tags the image with the name `my-node-app`.
+- `-t iras-docker`: Tags the image with the name `iras-docker`.
 - `.`: The `.` indicates that Docker should look for the `Dockerfile` in the current directory.
 
 ### 3. Run the Docker Container
@@ -138,7 +138,7 @@ docker build -t my-node-app .
 Once the image is built, you can run a container from it:
 
 ```bash
-docker run my-node-app
+docker run iras-docker
 ```
 
 You should see the following output in your terminal:

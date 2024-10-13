@@ -1,12 +1,21 @@
 # Docker Tutorial: Running a Node.js App on Windows with WSL
+This tutorial will guide you through setting up a simple Docker container for a Node.js application, creating a Docker image, and pushing it to Docker Hub.
 
-This tutorial will guide you through setting up Windows Subsystem for Linux (WSL), enabling virtualization, creating a simple Node.js app, writing a `Dockerfile`, and running your app inside a Docker container on Windows.
+## Why Use Docker Hub?
+
+Docker Hub is a cloud-based repository where you can store, share, and distribute Docker images. It allows you to:
+
+- **Easily share images** with your team or make them available to the public.
+- **Deploy applications** across various environments consistently.
+- **Maintain version control** for your Docker images using tags.
+- **Automate** image builds and integrate them with CI/CD pipelines.
+
+With Docker Hub, you can access your images from anywhere, making it easy to set up and deploy containers on different systems without needing to manually recreate or configure them.
 
 ## Prerequisites
 
-- **Docker Desktop** installed on Windows. If you haven't installed it yet, download and install from [Docker's official site](https://www.docker.com/products/docker-desktop).
-- **Windows Subsystem for Linux (WSL)** set up on your system.
-- **Git** installed on your system.
+- **Docker Desktop** installed on Windows.
+- A **Docker Hub account**. If you don’t have one, sign up at [hub.docker.com](https://hub.docker.com/).
 
 ## Setting Up WSL and Ubuntu
 
@@ -14,68 +23,25 @@ This tutorial will guide you through setting up Windows Subsystem for Linux (WSL
 
 Press `Windows + X` and select **Command Prompt (Admin)** or **Windows Terminal (Admin)**.
 
-### Step 2: Check WSL Version
-
-To check if WSL is already enabled, run the following command:
-
-```bash
-wsl --list --online
-```
-
-If WSL is not installed, proceed to the next step.
-
-### Step 3: Install WSL and Ubuntu
-
-To install WSL with Ubuntu, run the following command:
+### Step 2: Install WSL and Ubuntu
 
 ```bash
 wsl --install -d Ubuntu
 ```
 
-This command will:
-- Enable the required Windows features for WSL and virtualization.
-- Download and install the Ubuntu distribution.
-- Set up Ubuntu as the default WSL environment.
+After installation, restart your system if prompted.
 
-After the installation, restart your computer if prompted.
-
-### Step 4: Launch Ubuntu
-
-Once your computer restarts, open the Ubuntu terminal by searching for **Ubuntu** in the Start menu.
-
-### Step 5: Update and Upgrade Ubuntu
-
-In the Ubuntu terminal, run the following commands to update your package list and upgrade packages:
+### Step 3: Launch Ubuntu and Update
 
 ```bash
 sudo apt update
 sudo apt upgrade -y
 ```
 
-### Step 6: Install Docker in WSL (Optional)
-
-If you prefer to run Docker directly within the WSL environment, you can follow [Docker's official guide for Docker Engine on Ubuntu](https://docs.docker.com/engine/install/ubuntu/). However, using Docker Desktop is recommended as it integrates seamlessly with WSL.
-
-## Enabling Virtualization in Windows
-
-Docker requires virtualization to be enabled on your Windows system. Here’s how to ensure it’s turned on:
-
-1. **Enable Virtualization in BIOS:**
-   - Restart your computer and enter the BIOS/UEFI settings (typically by pressing `F2`, `F10`, `Delete`, or `Esc` during startup).
-   - Look for **Virtualization Technology** (Intel VT-x or AMD-V) and enable it.
-   - Save and exit the BIOS settings.
-
-2. **Enable Virtualization Features in Windows:**
-   - Press `Windows + R`, type `optionalfeatures`, and press **Enter**.
-   - In the **Windows Features** window, check:
-     - **Virtual Machine Platform**
-     - **Windows Subsystem for Linux**
-   - Click **OK** and restart your computer if prompted.
-
 ## Project Structure
 
 ```plaintext
-my-docker-app/
+iras-docker/
 │
 ├── app.js
 ├── Dockerfile
@@ -111,18 +77,7 @@ CMD ["node", "app.js"]
 
 ## Step-by-Step Guide to Docker
 
-### 1. Clone the Repository
-
-Clone this repository to your local machine:
-
-```bash
-git clone https://github.com/yourusername/my-docker-app.git
-cd my-docker-app
-```
-
-Replace `yourusername` with your GitHub username.
-
-### 2. Build the Docker Image
+### 1. Build the Docker Image
 
 Run the following command in the terminal (Windows Command Prompt, PowerShell, or Ubuntu WSL):
 
@@ -131,61 +86,67 @@ docker build -t iras-docker .
 ```
 
 - `-t iras-docker`: Tags the image with the name `iras-docker`.
-- `.`: The `.` indicates that Docker should look for the `Dockerfile` in the current directory.
+- `.`: Specifies that Docker should look for the `Dockerfile` in the current directory.
 
-### 3. Run the Docker Container
+### 2. Log in to Docker Hub
 
-Once the image is built, you can run a container from it:
-
-```bash
-docker run iras-docker
-```
-
-You should see the following output in your terminal:
-
-```plaintext
-Scope output: 5
-Scope output: 4
-Scope output: 3
-Scope output: 2
-Scope output: 1
-```
-
-### 4. Check Docker Images and Containers
-
-- To list all Docker images:
-
-  ```bash
-  docker images
-  ```
-
-- To list all running containers:
-
-  ```bash
-  docker ps
-  ```
-
-- To list all containers (including stopped ones):
-
-  ```bash
-  docker ps -a
-  ```
-
-### 5. Stop and Remove the Docker Container
-
-If you want to stop a running container, use the following command:
+Before pushing the image, log in to your Docker Hub account:
 
 ```bash
-docker stop <container_id>
+docker login
 ```
 
-To remove the container:
+You will be prompted to enter your Docker Hub **username** and **password**.
+
+### 3. Tag the Docker Image
+```bash
+docker tag iras-docker iras-docker/iras-docker:latest
+```
+
+- `iras-docker/iras-docker`: The format for images on Docker Hub is `username/repository_name`.
+- `latest`: This is the image tag. You can use different tags like `v1`, `v2` to specify versions.
+
+### 4. Push the Docker Image to Docker Hub
+
+After tagging the image, push it to Docker Hub:
 
 ```bash
-docker rm <container_id>
+docker push iras-docker/iras-docker:latest
 ```
 
-Replace `<container_id>` with the actual ID of the container, which you can find using `docker ps -a`.
+Replace `iras-docker` with your Docker Hub username.
+
+### 5. Verify the Image on Docker Hub
+
+- Go to [hub.docker.com](https://hub.docker.com/) and log in.
+- Navigate to your repositories under your profile.
+- You should see `iras-docker` listed with the `latest` tag.
+
+### 6. Pull the Image from Docker Hub (Optional)
+
+To test if the image is available on Docker Hub, you can pull it to any machine using:
+
+```bash
+docker pull iras-docker/iras-docker:latest
+```
+
+This will download the image from Docker Hub to your local machine.
+
+### Example: Full Process
+
+```bash
+# Step 1: Build the Docker image
+docker build -t iras-docker .
+
+# Step 2: Log in to Docker Hub
+docker login
+
+# Step 3: Tag the Docker image
+docker tag iras-docker iras-docker/iras-docker:latest
+
+# Step 4: Push the image to Docker Hub
+docker push iras-docker/iras-docker:latest
+```
 
 ## Additional Resources
 
@@ -201,4 +162,3 @@ Feel free to submit issues or pull requests if you find any bugs or have suggest
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
